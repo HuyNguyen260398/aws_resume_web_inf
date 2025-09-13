@@ -1,11 +1,11 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "AWS CloudFormation Template for AWS Resume Web"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Template for AWS Resume Web
 
 Parameters:
   BucketName:
     Type: String
-    Description: "Name of the S3 bucket to create"
-    Default: "s3.huyng2603.io"
+    Description: Name of the S3 bucket to create
+    Default: s3.huyng2603.io
 
 Resources:
   WebsiteBucket:
@@ -23,20 +23,19 @@ Resources:
 
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
-    DependsOn: WebsiteBucket
     Properties:
       Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Statement:
           - Effect: Allow
-            Principal: "*"
+            Principal: '*'
             Action: s3:GetObject
-            Resource: !Sub "${WebsiteBucket}/*"
+            Resource: !Sub ${WebsiteBucket}/*
 
 Outputs:
   WebsiteURL:
-    Description: "Website URL"
+    Description: Website URL
     Value: !GetAtt WebsiteBucket.WebsiteURL
   BucketName:
-    Description: "S3 Bucket Name"
+    Description: S3 Bucket Name
     Value: !Ref WebsiteBucket
