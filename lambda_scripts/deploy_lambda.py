@@ -154,7 +154,7 @@ def main():
         print("""
 {
   "repo_url": "https://github.com/yourusername/your-repo.git",
-  "bucket_name": "s3.huyng2603.io",
+  "bucket_name": "s3.nghuy.link",
   "branch": "main",
   "exclude_patterns": [".git", "*.md", "package.json"]
 }

@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Route 53 Hosted Zone for domain management
+
+Metadata:
+  RecommendedStackName: route53-hosted-zone
+  DeploymentCommand: |
+    aws cloudformation deploy \
+      --template-file cloudformation_templates/route53_hosted_zone.yaml \
+      --stack-name route53-hosted-zone \
+      --parameter-overrides DomainName=your-domain.com
+
+Parameters:
+  DomainName:
+    Type: String
+    Description: Domain name for the hosted zone
+    Default: huyng2603.io
+    AllowedPattern: ^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$
+    ConstraintDescription: Must be a valid domain name
+
+  CreateWWWRecord:
+    Type: String
+    Description: Create www CNAME record pointing to apex domain
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+
+  S3BucketWebsiteEndpoint:
+    Type: String
+    Description: S3 bucket website endpoint (optional, for A record alias)
+    Default: ''
+
+Resources:
+  # Route 53 Hosted Zone
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Ref DomainName
+      HostedZoneConfig:
+        Comment: !Sub 'Hosted zone for ${DomainName}'
+
+  # A Record pointing to S3 bucket (if provided)
+  ApexARecord:
+    Type: AWS::Route53::RecordSet
+    Condition: HasS3Endpoint
+    Properties:
+      HostedZoneId: !Ref HostedZone
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !Ref S3BucketWebsiteEndpoint
+        HostedZoneId: Z3AQBSTGFYJSTF  # S3 website hosting zone ID for us-east-1
+        EvaluateTargetHealth: false
+
+  # WWW CNAME Record (optional)
+  WWWRecord:
+    Type: AWS::Route53::RecordSet
+    Condition: CreateWWW
+    Properties:
+      HostedZoneId: !Ref HostedZone
+      Name: !Sub 'www.${DomainName}'
+      Type: CNAME
+      TTL: 300
+      ResourceRecords:
+        - !Ref DomainName
+
+Conditions:
+  CreateWWW: !Equals [!Ref CreateWWWRecord, 'true']
+  HasS3Endpoint: !Not [!Equals [!Ref S3BucketWebsiteEndpoint, '']]
+
+Outputs:
+  HostedZoneId:
+    Description: Route 53 Hosted Zone ID
+    Value: !Ref HostedZone
+    Export:
+      Name: !Sub '${AWS::StackName}-HostedZoneId'
+
+  NameServers:
+    Description: Name servers for the hosted zone
+    Value: !Join [', ', !GetAtt HostedZone.NameServers]
+    Export:
+      Name: !Sub '${AWS::StackName}-NameServers'
+
+  DomainName:
+    Description: Domain name
+    Value: !Ref DomainName
+    Export:
+      Name: !Sub '${AWS::StackName}-DomainName'

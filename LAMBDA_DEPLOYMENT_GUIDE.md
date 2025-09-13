@@ -150,7 +150,7 @@ aws lambda update-function-code \
 | Parameter | Description | Default | Required |
 |-----------|-------------|---------|----------|
 | `RepoUrl` | GitHub repository URL | `https://github.com/yourusername/your-repo.git` | Yes |
-| `BucketName` | S3 bucket name | `s3.huyng2603.io` | Yes |
+| `BucketName` | S3 bucket name | `s3.nghuy.link` | Yes |
 | `Branch` | Git branch to sync | `main` | No |
 | `GitHubToken` | GitHub personal access token | Empty | No* |
 

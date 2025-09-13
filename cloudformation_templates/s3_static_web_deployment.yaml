@@ -1,11 +1,20 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation Template for AWS Resume Web
 
+Metadata:
+  RecommendedStackName: s3-static-web
+  DeploymentCommand: |
+    aws cloudformation deploy \
+      --template-file cloudformation_templates/s3_static_web_deployment.yaml \
+      --stack-name s3-static-web \
+      --capabilities CAPABILITY_IAM \
+      --parameter-overrides BucketName=your-bucket-name
+
 Parameters:
   BucketName:
     Type: String
     Description: Name of the S3 bucket to create
-    Default: s3.huyng2603.io
+    Default: s3.nghuy.link
 
 Resources:
   WebsiteBucket:
@@ -30,7 +39,11 @@ Resources:
           - Effect: Allow
             Principal: '*'
             Action: s3:GetObject
-            Resource: !Sub ${WebsiteBucket}/*
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebsiteBucket
+                - /*
 
 Outputs:
   WebsiteURL:

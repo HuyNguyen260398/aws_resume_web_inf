@@ -7,7 +7,7 @@ set -e
 
 # Default values
 REPO_URL=${1:-"https://github.com/yourusername/your-repo.git"}
-BUCKET_NAME=${2:-"s3.huyng2603.io"}
+BUCKET_NAME=${2:-"s3.nghuy.link"}
 BRANCH=${3:-"main"}
 STACK_NAME="github-s3-sync"
 FUNCTION_NAME="github-s3-sync"

@@ -3,7 +3,7 @@
 
 param(
     [string]$RepoUrl = "https://github.com/yourusername/your-repo.git",
-    [string]$BucketName = "s3.huyng2603.io", 
+    [string]$BucketName = "s3.nghuy.link", 
     [string]$Branch = "main"
 )
 
