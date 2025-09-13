@@ -1,16 +1,18 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'AWS CloudFormation Template for AWS Resume Web'
+# CloudFormation Template
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS CloudFormation Template for AWS Resume Web"
 
 Parameters:
   BucketName:
     Type: String
-    Description: 'Name of the S3 bucket to create'
+    Description: "Name of the S3 bucket to create"
 
 Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName:
+        Ref: BucketName
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -24,23 +26,28 @@ Resources:
     Type: AWS::S3::BucketPolicy
     DependsOn: WebsiteBucket
     Properties:
-      Bucket: !Ref WebsiteBucket
+      Bucket:
+        Ref: WebsiteBucket
       PolicyDocument:
         Statement:
           - Effect: Allow
-            Principal: '*'
+            Principal: "*"
             Action: s3:GetObject
-            Resource: !Join 
-              - ''
-              - 
-                - 'arn:aws:s3:::'
-                - !Ref WebsiteBucket
-                - '/*'
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:s3:::"
+                  - Ref: WebsiteBucket
+                  - "/*"
 
 Outputs:
   WebsiteURL:
-    Description: 'Website URL'
-    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Description: "Website URL"
+    Value:
+      Fn::GetAtt:
+        - WebsiteBucket
+        - WebsiteURL
   BucketName:
-    Description: 'S3 Bucket Name'
-    Value: !Ref WebsiteBucket
+    Description: "S3 Bucket Name"
+    Value:
+      Ref: WebsiteBucket
